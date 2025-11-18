@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">cp</string>
+    <string name="file_sharing_app">FILE SHARING APP</string>
+    <string name="e_mail">E-MAIL</string>
+    <string name="password">PASSWORD</string>
+    <string name="sign_in">SIGN IN</string>
+    <string name="or">OR</string>
+    <string name="sign_up">SIGN UP</string>
 </resources>

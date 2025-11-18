@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">cp</string>
+    <string name="file_sharing_app">ОБМЕН ФАЙЛАМИ</string>
+    <string name="e_mail">ПОЧТА</string>
+    <string name="password">ПАРОЛЬ</string>
+    <string name="sign_in">ВХОД</string>
+    <string name="or">ИЛИ</string>
+    <string name="sign_up">РЕГИСТРАЦИЯ</string>
+</resources>

@@ -8,6 +8,17 @@
     android:orientation="vertical"
     tools:context=".AuthActivity">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="64dp"
+        android:fontFamily="monospace"
+        android:text="@string/file_sharing_app"
+        android:textColor="@color/black"
+        android:textSize="36sp"
+        android:textStyle="bold" />
+
     <!-- почта -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/emailInputLayout"
@@ -15,28 +26,28 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
+        android:layout_marginTop="80dp"
         android:layout_marginEnd="24dp"
-        android:layout_marginTop="48dp"
         app:boxBackgroundMode="outline"
         app:boxCornerRadiusBottomEnd="0dp"
         app:boxCornerRadiusBottomStart="0dp"
         app:boxCornerRadiusTopEnd="0dp"
         app:boxCornerRadiusTopStart="0dp"
-        app:boxStrokeColor="@color/retro_black"
+        app:boxStrokeColor="@color/black"
         app:boxStrokeWidth="2dp"
-        app:hintTextColor="@color/retro_black">
+        app:hintTextColor="@color/black">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/emailInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="monospace"
-            android:hint="E-MAIL"
+            android:hint="@string/e_mail"
             android:inputType="textEmailAddress"
             android:padding="16dp"
             android:textAllCaps="true"
-            android:textColor="@color/retro_black"
-            android:textSize="16sp" />
+            android:textColor="@color/black"
+            android:textSize="18sp" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -47,49 +58,49 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
         android:layout_marginTop="16dp"
+        android:layout_marginEnd="24dp"
         app:boxBackgroundMode="outline"
         app:boxCornerRadiusBottomEnd="0dp"
         app:boxCornerRadiusBottomStart="0dp"
         app:boxCornerRadiusTopEnd="0dp"
         app:boxCornerRadiusTopStart="0dp"
-        app:boxStrokeColor="@color/retro_black"
+        app:boxStrokeColor="@color/black"
         app:boxStrokeWidth="2dp"
-        app:hintTextColor="@color/retro_black"
+        app:hintTextColor="@color/black"
         app:passwordToggleEnabled="true"
-        app:passwordToggleTint="@color/retro_black">
+        app:passwordToggleTint="@color/black">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/passwordInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="monospace"
-            android:hint="PASSWORD"
+            android:hint="@string/password"
             android:inputType="textPassword"
             android:padding="16dp"
             android:textAllCaps="true"
-            android:textColor="@color/retro_black"
-            android:textSize="16sp" />
+            android:textColor="@color/black"
+            android:textSize="18sp" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- вход -->
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/loginButton"
-        style="?android:attr/borderlessButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
         android:layout_marginTop="32dp"
-        android:background="@color/retro_black"
+        android:layout_marginEnd="24dp"
         android:fontFamily="monospace"
         android:padding="16dp"
-        android:text="SIGN IN"
-        android:textColor="@color/retro_white"
+        android:text="@string/sign_in"
+        android:textColor="@color/white"
         android:textSize="18sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        app:backgroundTint="@color/black"
+        app:cornerRadius="0dp" />
 
     <!-- разделитель -->
     <TextView
@@ -98,26 +109,26 @@
         android:layout_gravity="center"
         android:layout_marginTop="16dp"
         android:fontFamily="monospace"
-        android:text="OR"
-        android:textColor="@color/retro_black"
+        android:text="@string/or"
+        android:textColor="@color/black"
         android:textSize="16sp"
         android:textStyle="bold" />
 
     <!-- регистрация -->
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/registerButton"
-        style="?android:attr/borderlessButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
         android:layout_marginTop="16dp"
-        android:background="@color/retro_gray"
+        android:layout_marginEnd="24dp"
         android:fontFamily="monospace"
         android:padding="16dp"
-        android:text="SIGN UP"
-        android:textColor="@color/retro_white"
+        android:text="@string/sign_up"
+        android:textColor="@color/white"
         android:textSize="18sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        app:backgroundTint="@color/gray"
+        app:cornerRadius="0dp" />
 
 </LinearLayout>

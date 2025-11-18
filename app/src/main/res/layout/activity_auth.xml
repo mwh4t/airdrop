@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:columnCount="1"
+    android:rowCount="7"
     tools:context=".AuthActivity">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_row="0"
+        android:layout_column="0"
         android:layout_gravity="center"
         android:layout_marginTop="64dp"
         android:fontFamily="monospace"
@@ -23,8 +26,11 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/emailInputLayout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_row="1"
+        android:layout_column="0"
+        android:layout_gravity="fill_horizontal"
         android:layout_marginStart="24dp"
         android:layout_marginTop="80dp"
         android:layout_marginEnd="24dp"
@@ -55,8 +61,11 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/passwordInputLayout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_row="2"
+        android:layout_column="0"
+        android:layout_gravity="fill_horizontal"
         android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="24dp"
@@ -88,8 +97,11 @@
     <!-- вход -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/loginButton"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_row="3"
+        android:layout_column="0"
+        android:layout_gravity="fill_horizontal"
         android:layout_marginStart="24dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="24dp"
@@ -106,6 +118,8 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_row="4"
+        android:layout_column="0"
         android:layout_gravity="center"
         android:layout_marginTop="16dp"
         android:fontFamily="monospace"
@@ -117,8 +131,11 @@
     <!-- регистрация -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/registerButton"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_row="5"
+        android:layout_column="0"
+        android:layout_gravity="fill_horizontal"
         android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="24dp"
@@ -129,6 +146,29 @@
         android:textSize="18sp"
         android:textStyle="bold"
         app:backgroundTint="@color/gray"
-        app:cornerRadius="0dp" />
+        app:cornerRadius="0dp"
+        app:strokeWidth="2dp" />
 
-</LinearLayout>
+    <!-- google auth -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/googleButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_row="6"
+        android:layout_column="0"
+        android:layout_gravity="fill_horizontal|bottom"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="24dp"
+        android:fontFamily="monospace"
+        app:backgroundTint="@color/white"
+        app:cornerRadius="0dp"
+        app:icon="@drawable/google"
+        app:iconGravity="textStart"
+        app:iconSize="40dp"
+        app:iconTint="@null"
+        app:strokeColor="@color/black"
+        app:strokeWidth="2dp" />
+
+</GridLayout>

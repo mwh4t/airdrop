@@ -7,4 +7,9 @@
     <string name="sign_in">ВХОД</string>
     <string name="or">ИЛИ</string>
     <string name="sign_up">РЕГИСТРАЦИЯ</string>
+    <string name="your_id">ВАШ ID:</string>
+    <string name="tap_to_select_file">ВЫБРАТЬ ФАЙЛ</string>
+    <string name="receive">ПОЛУЧИТЬ</string>
+    <string name="send">ОТПРАВИТЬ</string>
+    <string name="log_out">ВЫХОД</string>
 </resources>

@@ -6,4 +6,9 @@
     <string name="sign_in">SIGN IN</string>
     <string name="or">OR</string>
     <string name="sign_up">SIGN UP</string>
+    <string name="your_id">YOUR ID:</string>
+    <string name="tap_to_select_file">TAP TO SELECT FILE</string>
+    <string name="receive">RECEIVE</string>
+    <string name="send">SEND</string>
+    <string name="log_out">LOG OUT</string>
 </resources>

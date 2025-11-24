@@ -11,4 +11,8 @@
     <string name="receive">RECEIVE</string>
     <string name="send">SEND</string>
     <string name="log_out">LOG OUT</string>
+    <string name="sending">SENDING</string>
+    <string name="enter_recipient_id">ENTER RECIPIENT ID</string>
+    <string name="recipient_id">RECIPIENT ID</string>
+    <string name="cancel">CANCEL</string>
 </resources>

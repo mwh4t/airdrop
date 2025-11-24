@@ -12,4 +12,8 @@
     <string name="receive">ПОЛУЧИТЬ</string>
     <string name="send">ОТПРАВИТЬ</string>
     <string name="log_out">ВЫХОД</string>
+    <string name="sending">ОТПРАВКА</string>
+    <string name="enter_recipient_id">ВВЕДИТЕ ID ПОЛУЧАТЕЛЯ</string>
+    <string name="recipient_id">ID ПОЛУЧАТЕЛЯ</string>
+    <string name="cancel">ОТМЕНА</string>
 </resources>

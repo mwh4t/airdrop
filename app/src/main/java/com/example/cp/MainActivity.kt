@@ -1,16 +1,17 @@
 package com.example.cp
 
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.provider.OpenableColumns
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
+import com.example.cp.utils.AuthUtils
+import com.example.cp.utils.FileUtils
+import com.example.cp.utils.FirestoreUserManager
+import com.example.cp.utils.UIUtils
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
 
@@ -18,12 +19,17 @@ class MainActivity : AppCompatActivity() {
     private var selectedFileUri: Uri? = null
     private var selectedFileName: String? = null
 
+    private lateinit var idValueText: TextView
+    private lateinit var fileSelectionCard: MaterialCardView
+    private lateinit var fileSelectionText: TextView
+
     private val filePickerLauncher = registerForActivityResult(
         ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         uri?.let {
             selectedFileUri = it
-            selectedFileName = getFileName(it)
+            selectedFileName = FileUtils
+                .getFileName(this, it)
             updateFileDisplay()
         }
     }
@@ -33,10 +39,28 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 
-        val fileSelectionCard = findViewById<MaterialCardView>(R.id.fileSelectionCard)
-        val fileSelectionText = findViewById<TextView>(R.id.fileSelectionText)
+        // проверка авторизации
+        if (!AuthUtils.isUserLoggedIn()) {
+            AuthUtils.navigateToAuth(this)
+            return
+        }
+
+        // инициализация UI
+        initializeUI()
+
+        // загрузка и отображение ID пользователя
+        loadUserId()
+    }
+
+    // инициализация UI элементов и обработчиков
+    private fun initializeUI() {
+        idValueText = findViewById(R.id.idValueText)
+        fileSelectionCard = findViewById(R.id.fileSelectionCard)
+        fileSelectionText = findViewById(R.id.fileSelectionText)
+
         val sendButton = findViewById<MaterialButton>(R.id.sendButton)
         val receiveButton = findViewById<MaterialButton>(R.id.receiveButton)
+        val logoutButton = findViewById<ImageButton>(R.id.logoutButton)
 
         // обработчик выбора файла
         fileSelectionCard.setOnClickListener {
@@ -45,48 +69,66 @@ class MainActivity : AppCompatActivity() {
 
         // обработчик получения файла
         receiveButton.setOnClickListener {
-            val dialog = ReceivingDialogFragment.newInstance()
-            dialog.show(supportFragmentManager, "ReceiveFileDialog")
+            handleReceiveFile()
         }
 
         // обработчик отправки
         sendButton.setOnClickListener {
-            if (selectedFileUri == null) {
-                highlightFileSelectionError(
-                    fileSelectionCard,
-                    fileSelectionText
-                )
-            } else {
-                // TODO: логика отправки файла
-            }
+            handleSendFile()
         }
 
-        findViewById<ImageButton>(R.id.logoutButton).setOnClickListener {
-            val intent = Intent(
-                this,
-                AuthActivity::class.java
-            )
-            startActivity(intent)
-            finish()
+        // обработчик выхода
+        logoutButton.setOnClickListener {
+            handleLogout()
         }
     }
 
-    private fun getFileName(uri: Uri): String {
-        var fileName = "unknown"
-        val cursor = contentResolver.query(uri, null, null, null, null)
-        cursor?.use {
-            if (it.moveToFirst()) {
-                val nameIndex = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-                if (nameIndex != -1) {
-                    fileName = it.getString(nameIndex)
-                }
+    // загрузка ID пользователя из Firestore
+    private fun loadUserId() {
+        val currentUser = AuthUtils.getCurrentUser() ?: return
+
+        FirestoreUserManager.loadUserId(
+            currentUser.uid,
+            onSuccess = { numericId ->
+                idValueText.text = numericId ?: "N/A"
+            },
+            onFailure = { e ->
+                Toast.makeText(
+                    this,
+                    "Failed to load ID: ${e.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
+                idValueText.text = "Error"
             }
-        }
-        return fileName
+        )
     }
 
+    // обработка получения файла
+    private fun handleReceiveFile() {
+        val dialog = ReceivingDialogFragment.newInstance()
+        dialog.show(supportFragmentManager, "ReceiveFileDialog")
+    }
+
+    // обработка отправки файла
+    private fun handleSendFile() {
+        if (selectedFileUri == null) {
+            highlightFileSelectionError()
+        } else {
+            // TODO: логика отправки файла
+        }
+    }
+
+    // обработка выхода из аккаунта
+    private fun handleLogout() {
+        AuthUtils.signOut()
+        AuthUtils.navigateToAuth(this)
+    }
+
+    // обновление отображения выбранного файла
     private fun updateFileDisplay() {
-        val selectedFileNameTextView = findViewById<TextView>(R.id.selectedFileName)
+        val selectedFileNameTextView = findViewById<TextView>(
+            R.id.selectedFileName
+        )
         selectedFileNameTextView.text = selectedFileName ?: ""
 
         Toast.makeText(
@@ -100,21 +142,15 @@ class MainActivity : AppCompatActivity() {
         dialog.show(supportFragmentManager, "SendFileDialog")
     }
 
-    private fun highlightFileSelectionError(cardView: MaterialCardView, textView: TextView) {
-        val originalStrokeColor = ContextCompat
-            .getColor(this, R.color.black)
-        val originalTextColor = ContextCompat
-            .getColor(this, R.color.black)
-        val errorColor = ContextCompat
-            .getColor(this, android.R.color.holo_red_dark)
-
-        cardView.strokeColor = errorColor
-        textView.setTextColor(errorColor)
-
-        cardView.postDelayed({
-            cardView.strokeColor = originalStrokeColor
-            textView.setTextColor(originalTextColor)
-        }, 500)
+    // подсветка ошибки при отсутствии выбранного файла
+    private fun highlightFileSelectionError() {
+        UIUtils.highlightFileSelectionError(
+            this,
+            fileSelectionCard,
+            fileSelectionText,
+            android.R.color.holo_red_dark,
+            R.color.black
+        )
 
         Toast.makeText(
             this,

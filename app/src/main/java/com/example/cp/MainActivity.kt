@@ -36,10 +36,17 @@ class MainActivity : AppCompatActivity() {
         val fileSelectionCard = findViewById<MaterialCardView>(R.id.fileSelectionCard)
         val fileSelectionText = findViewById<TextView>(R.id.fileSelectionText)
         val sendButton = findViewById<MaterialButton>(R.id.sendButton)
+        val receiveButton = findViewById<MaterialButton>(R.id.receiveButton)
 
         // обработчик выбора файла
         fileSelectionCard.setOnClickListener {
             filePickerLauncher.launch("*/*")
+        }
+
+        // обработчик получения файла
+        receiveButton.setOnClickListener {
+            val dialog = ReceivingDialogFragment.newInstance()
+            dialog.show(supportFragmentManager, "ReceiveFileDialog")
         }
 
         // обработчик отправки

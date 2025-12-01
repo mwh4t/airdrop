@@ -1,5 +1,5 @@
-<resources>
-    <string name="app_name">cp</string>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name" translatable="false">cp</string>
     <string name="file_sharing_app">FILE SHARING APP</string>
     <string name="e_mail">E-MAIL</string>
     <string name="password">PASSWORD</string>
@@ -11,8 +11,13 @@
     <string name="receive">RECEIVE</string>
     <string name="send">SEND</string>
     <string name="log_out">LOG OUT</string>
-    <string name="sending">SENDING</string>
+    <string name="send_file">SEND FILE</string>
     <string name="enter_recipient_id">ENTER RECIPIENT ID</string>
     <string name="recipient_id">RECIPIENT ID</string>
-    <string name="cancel">CANCEL</string>
+    <string name="cancel" tools:ignore="ButtonCase">CANCEL</string>
+    <string name="receive_file">RECEIVE FILE</string>
+    <string name="enter_sender_id">ENTER SENDER ID</string>
+    <string name="sender_id">SENDER ID</string>
+    <string name="receiving_file">RECEIVING FILE…</string>
+    <string name="sending">SENDING</string>
 </resources>

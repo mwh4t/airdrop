@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">cp</string>
     <string name="file_sharing_app">ОБМЕН ФАЙЛАМИ</string>
     <string name="e_mail">ПОЧТА</string>
     <string name="password">ПАРОЛЬ</string>
@@ -12,8 +11,13 @@
     <string name="receive">ПОЛУЧИТЬ</string>
     <string name="send">ОТПРАВИТЬ</string>
     <string name="log_out">ВЫХОД</string>
+    <string name="receiving_file">ПОЛУЧЕНИЕ ФАЙЛА…</string>
     <string name="sending">ОТПРАВКА</string>
+    <string name="send_file">ОТПРАВИТЬ ФАЙЛ</string>
     <string name="enter_recipient_id">ВВЕДИТЕ ID ПОЛУЧАТЕЛЯ</string>
     <string name="recipient_id">ID ПОЛУЧАТЕЛЯ</string>
     <string name="cancel">ОТМЕНА</string>
+    <string name="receive_file">ПОЛУЧИТЬ ФАЙЛ</string>
+    <string name="enter_sender_id">ВВЕДИТЕ ID ОТПРАВИТЕЛЯ</string>
+    <string name="sender_id">ID ОТПРАВИТЕЛЯ</string>
 </resources>

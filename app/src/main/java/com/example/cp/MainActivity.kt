@@ -1,5 +1,6 @@
 package com.example.cp
 
+import android.content.res.ColorStateList
 import android.net.Uri
 import android.os.Bundle
 import android.widget.ImageButton
@@ -8,6 +9,7 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.example.cp.utils.AuthUtils
 import com.example.cp.utils.FileUtils
 import com.example.cp.utils.FirestoreUserManager
@@ -22,6 +24,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var idValueText: TextView
     private lateinit var fileSelectionCard: MaterialCardView
     private lateinit var fileSelectionText: TextView
+    private lateinit var receiveButton: MaterialButton
+    private lateinit var sendButton: MaterialButton
 
     private val filePickerLauncher = registerForActivityResult(
         ActivityResultContracts.GetContent()
@@ -58,13 +62,19 @@ class MainActivity : AppCompatActivity() {
         fileSelectionCard = findViewById(R.id.fileSelectionCard)
         fileSelectionText = findViewById(R.id.fileSelectionText)
 
-        val sendButton = findViewById<MaterialButton>(R.id.sendButton)
-        val receiveButton = findViewById<MaterialButton>(R.id.receiveButton)
+        receiveButton = findViewById<MaterialButton>(R.id.receiveButton)
+        sendButton = findViewById<MaterialButton>(R.id.sendButton)
         val logoutButton = findViewById<ImageButton>(R.id.logoutButton)
 
         // обработчик выбора файла
         fileSelectionCard.setOnClickListener {
             filePickerLauncher.launch("*/*")
+        }
+
+        // обработчик долгого нажатия для сброса выбранного файла
+        fileSelectionCard.setOnLongClickListener {
+            clearFileSelection()
+            true
         }
 
         // обработчик получения файла
@@ -114,7 +124,8 @@ class MainActivity : AppCompatActivity() {
         if (selectedFileUri == null) {
             highlightFileSelectionError()
         } else {
-            // TODO: логика отправки файла
+            val dialog = SendingDialogFragment.newInstance(selectedFileName ?: "")
+            dialog.show(supportFragmentManager, "SendFileDialog")
         }
     }
 
@@ -137,9 +148,14 @@ class MainActivity : AppCompatActivity() {
             Toast.LENGTH_SHORT
         ).show()
 
-        // диалог для ввода ID
-        val dialog = SendingDialogFragment.newInstance(selectedFileName ?: "")
-        dialog.show(supportFragmentManager, "SendFileDialog")
+        receiveButton.isEnabled = false
+        receiveButton.backgroundTintList = ColorStateList.valueOf(
+            ContextCompat.getColor(this, R.color.gray)
+        )
+        receiveButton.strokeWidth = 2
+
+//        val dialog = SendingDialogFragment.newInstance(selectedFileName ?: "")
+//        dialog.show(supportFragmentManager, "SendFileDialog")
     }
 
     // подсветка ошибки при отсутствии выбранного файла
@@ -157,5 +173,20 @@ class MainActivity : AppCompatActivity() {
             "Выберите файл!",
             Toast.LENGTH_SHORT
         ).show()
+    }
+
+    // сброс выбранного файла
+    private fun clearFileSelection() {
+        selectedFileUri = null
+        selectedFileName = null
+
+        val selectedFileNameTextView =
+            findViewById<TextView>(R.id.selectedFileName)
+
+        UIUtils.clearFileSelection(
+            this,
+            selectedFileNameTextView,
+            receiveButton
+        )
     }
 }

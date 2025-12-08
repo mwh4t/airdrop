@@ -1,8 +1,12 @@
 package com.example.cp.utils
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
+import com.example.cp.R
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
 
 object UIUtils {
@@ -27,5 +31,48 @@ object UIUtils {
             cardView.strokeColor = normalColor
             textView.setTextColor(normalColor)
         }, 500)
+    }
+
+    // обновление отображения выбранного файла
+    fun updateFileDisplay(
+        context: Context,
+        fileName: String?,
+        selectedFileNameTextView: TextView,
+        receiveButton: MaterialButton
+    ) {
+        selectedFileNameTextView.text = fileName ?: ""
+
+        Toast.makeText(
+            context,
+            "Файл выбран: $fileName",
+            Toast.LENGTH_SHORT
+        ).show()
+
+        receiveButton.isEnabled = false
+        receiveButton.backgroundTintList = ColorStateList.valueOf(
+            ContextCompat.getColor(context, R.color.gray)
+        )
+        receiveButton.strokeWidth = 2
+    }
+
+    // сброс выбранного файла
+    fun clearFileSelection(
+        context: Context,
+        selectedFileNameTextView: TextView,
+        receiveButton: MaterialButton
+    ) {
+        selectedFileNameTextView.text = ""
+
+        receiveButton.isEnabled = true
+        receiveButton.backgroundTintList = ColorStateList.valueOf(
+            ContextCompat.getColor(context, R.color.black)
+        )
+        receiveButton.strokeWidth = 0
+
+        Toast.makeText(
+            context,
+            "Файл отменён",
+            Toast.LENGTH_SHORT
+        ).show()
     }
 }

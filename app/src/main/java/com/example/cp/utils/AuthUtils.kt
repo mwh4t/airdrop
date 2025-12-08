@@ -13,7 +13,8 @@ object AuthUtils {
     }
 
     // получение текущего пользователя
-    fun getCurrentUser() = FirebaseAuth.getInstance().currentUser
+    fun getCurrentUser() = FirebaseAuth.getInstance()
+        .currentUser
 
     // выход из системы
     fun signOut() {
@@ -22,8 +23,12 @@ object AuthUtils {
 
     // переход на экран авторизации
     fun navigateToAuth(context: Context) {
-        val intent = Intent(context, AuthActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        val intent = Intent(
+            context,
+            AuthActivity::class.java
+        )
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or
+                Intent.FLAG_ACTIVITY_CLEAR_TASK
         context.startActivity(intent)
     }
 }

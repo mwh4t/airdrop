@@ -5,50 +5,71 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:columnCount="2"
+    android:columnCount="3"
     android:rowCount="5"
     tools:context=".MainActivity">
 
+    <!-- история -->
+    <FrameLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_row="0"
+        android:layout_column="0"
+        android:layout_columnWeight="1"
+        android:layout_marginTop="48dp">
+
+        <ImageButton
+            android:id="@+id/historyButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="start"
+            android:layout_marginStart="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/log_out"
+            android:padding="6dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/clock" />
+
+    </FrameLayout>
+
     <!-- id label -->
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_row="0"
-            android:layout_column="0"
-            android:layout_columnWeight="2"
-            android:layout_gravity="fill_horizontal|center_vertical"
-            android:layout_marginTop="48dp"
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_row="0"
+        android:layout_column="1"
+        android:layout_columnWeight="1"
+        android:layout_gravity="center_vertical"
+        android:layout_marginTop="48dp"
+        android:fontFamily="monospace"
+        android:gravity="center"
+        android:text="@string/your_id"
+        android:textColor="@color/black"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+    <!-- выход -->
+    <FrameLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_row="0"
+        android:layout_column="2"
+        android:layout_columnWeight="1"
+        android:layout_marginTop="48dp">
+
+        <ImageButton
+            android:id="@+id/logoutButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="end"
             android:layout_marginEnd="8dp"
-            android:fontFamily="monospace"
-            android:gravity="end"
-            android:text="@string/your_id"
-            android:textColor="@color/black"
-            android:textSize="24sp"
-            android:textStyle="bold" />
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/log_out"
+            android:padding="8dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/logout" />
 
-        <!-- выход -->
-        <FrameLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_row="0"
-            android:layout_column="1"
-            android:layout_columnWeight="1"
-            android:layout_marginTop="48dp">
-
-            <ImageButton
-                android:id="@+id/logoutButton"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_gravity="end|center_vertical"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="24dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/log_out"
-                android:padding="8dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/logout" />
-
-        </FrameLayout>
+    </FrameLayout>
 
     <!-- id -->
     <TextView
@@ -57,7 +78,7 @@
         android:layout_height="wrap_content"
         android:layout_row="1"
         android:layout_column="0"
-        android:layout_columnSpan="2"
+        android:layout_columnSpan="3"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="16dp"
         android:fontFamily="monospace"
@@ -73,7 +94,7 @@
         android:layout_height="0dp"
         android:layout_row="2"
         android:layout_column="0"
-        android:layout_columnSpan="2"
+        android:layout_columnSpan="3"
         android:layout_gravity="fill"
         android:layout_marginStart="24dp"
         android:layout_marginTop="48dp"
@@ -128,7 +149,7 @@
         android:layout_height="wrap_content"
         android:layout_row="3"
         android:layout_column="0"
-        android:layout_columnSpan="2"
+        android:layout_columnSpan="3"
         android:layout_gravity="fill_horizontal"
         android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
@@ -150,7 +171,7 @@
         android:layout_height="wrap_content"
         android:layout_row="4"
         android:layout_column="0"
-        android:layout_columnSpan="2"
+        android:layout_columnSpan="3"
         android:layout_gravity="fill_horizontal"
         android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"

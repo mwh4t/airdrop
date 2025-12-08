@@ -7,6 +7,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
+import com.example.cp.R
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -37,7 +38,7 @@ class GoogleAuthManager(
             } catch (e: ApiException) {
                 Toast.makeText(
                     activity,
-                    "Google sign in failed: ${e.message}",
+                    activity.getErrorMessage(e.message),
                     Toast.LENGTH_SHORT
                 ).show()
             }
@@ -84,7 +85,9 @@ class GoogleAuthManager(
                 } else {
                     Toast.makeText(
                         activity,
-                        "Authentication failed: ${task.exception?.message}",
+                        activity.getErrorMessage(
+                            task.exception?.message
+                        ),
                         Toast.LENGTH_SHORT
                     ).show()
                 }

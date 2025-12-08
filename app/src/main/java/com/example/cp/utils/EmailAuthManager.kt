@@ -2,6 +2,7 @@ package com.example.cp.utils
 
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.cp.R
 import com.google.firebase.auth.FirebaseAuth
 
 class EmailAuthManager(
@@ -35,9 +36,13 @@ class EmailAuthManager(
                         )
                     }
                 } else {
-                    val errorMsg = "Authentication failed: ${task.exception?.message}"
-                    Toast.makeText(activity, errorMsg,
-                        Toast.LENGTH_SHORT).show()
+                    val errorMsg = activity.getErrorMessage(
+                        task.exception?.message
+                    )
+                    Toast.makeText(
+                        activity, errorMsg,
+                        Toast.LENGTH_SHORT
+                    ).show()
                     onFailure?.invoke(errorMsg)
                 }
             }
@@ -56,7 +61,8 @@ class EmailAuthManager(
 
         if (password.length < 6) {
             Toast.makeText(
-                activity, "Password must be at least 6 characters",
+                activity,
+                activity.getString(R.string.password_length),
                 Toast.LENGTH_SHORT
             ).show()
             return
@@ -76,7 +82,10 @@ class EmailAuthManager(
                             onSuccess = {
                                 Toast.makeText(
                                     activity,
-                                    "Registration successful!",
+                                    activity.getString
+                                        (
+                                        R.string.registration_successful
+                                    ),
                                     Toast.LENGTH_SHORT
                                 ).show()
                                 onSuccess()
@@ -84,9 +93,13 @@ class EmailAuthManager(
                         )
                     }
                 } else {
-                    val errorMsg = "Registration failed: ${task.exception?.message}"
-                    Toast.makeText(activity, errorMsg,
-                        Toast.LENGTH_SHORT).show()
+                    val errorMsg = activity.getErrorMessage(
+                        task.exception?.message
+                    )
+                    Toast.makeText(
+                        activity, errorMsg,
+                        Toast.LENGTH_SHORT
+                    ).show()
                     onFailure?.invoke(errorMsg)
                 }
             }
@@ -95,8 +108,11 @@ class EmailAuthManager(
     // валидация введенных данных
     private fun validateInput(email: String, password: String): Boolean {
         if (email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(activity, "Fill in all fields",
-                Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                activity,
+                activity.getString(R.string.fill_in_fields),
+                Toast.LENGTH_SHORT
+            ).show()
             return false
         }
         return true

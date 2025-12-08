@@ -2,6 +2,7 @@ package com.example.cp.utils
 
 import android.content.Context
 import android.widget.Toast
+import com.example.cp.R
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FieldValue
 
@@ -32,7 +33,8 @@ object FirestoreUserManager {
                         "uid" to userId,
                         "id" to numericId,
                         "email" to email,
-                        "displayName" to (displayName ?: email.substringBefore("@")),
+                        "displayName" to (displayName ?: email
+                            .substringBefore("@")),
                         "authProvider" to authProvider,
                         "createdAt" to FieldValue.serverTimestamp()
                     )
@@ -44,7 +46,7 @@ object FirestoreUserManager {
                         .addOnFailureListener { e ->
                             Toast.makeText(
                                 context,
-                                "Failed to save user data: ${e.message}",
+                                context.getErrorMessage(e.message),
                                 Toast.LENGTH_SHORT
                             ).show()
                             onFailure?.invoke(e)
@@ -66,7 +68,8 @@ object FirestoreUserManager {
             }
             .addOnFailureListener { e ->
                 Toast.makeText(
-                    context, "Failed to check user: ${e.message}",
+                    context,
+                    context.getErrorMessage(e.message),
                     Toast.LENGTH_SHORT
                 ).show()
                 onFailure?.invoke(e)
@@ -79,7 +82,8 @@ object FirestoreUserManager {
         onSuccess: (String?) -> Unit,
         onFailure: ((Exception) -> Unit)? = null
     ) {
-        firestore.collection("users").document(userId)
+        firestore.collection("users")
+            .document(userId)
             .get()
             .addOnSuccessListener { document ->
                 if (document.exists()) {

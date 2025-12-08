@@ -93,7 +93,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // загрузка ID пользователя из Firestore
+    // загрузка ID пользователя
     private fun loadUserId() {
         val currentUser = AuthUtils.getCurrentUser() ?: return
 
@@ -105,7 +105,8 @@ class MainActivity : AppCompatActivity() {
             onFailure = { e ->
                 Toast.makeText(
                     this,
-                    "Failed to load ID: ${e.message}",
+                    getString(R.string.failed_to_load_id) +
+                            e.message,
                     Toast.LENGTH_SHORT
                 ).show()
                 idValueText.text = "Error"
@@ -144,7 +145,8 @@ class MainActivity : AppCompatActivity() {
 
         Toast.makeText(
             this,
-            "Файл выбран: $selectedFileName",
+            getString(R.string.file_is_selected) +
+                    selectedFileName,
             Toast.LENGTH_SHORT
         ).show()
 
@@ -170,7 +172,7 @@ class MainActivity : AppCompatActivity() {
 
         Toast.makeText(
             this,
-            "Выберите файл!",
+            getString(R.string.select_the_file),
             Toast.LENGTH_SHORT
         ).show()
     }

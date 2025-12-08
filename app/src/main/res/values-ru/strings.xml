@@ -20,4 +20,12 @@
     <string name="receive_file">ПОЛУЧИТЬ ФАЙЛ</string>
     <string name="enter_sender_id">ВВЕДИТЕ ID ОТПРАВИТЕЛЯ</string>
     <string name="sender_id">ID ОТПРАВИТЕЛЯ</string>
+    <string name="error">Ошибка: %s</string>
+    <string name="password_length">Пароль должен содержать не менее 6 символов</string>
+    <string name="registration_successful">Регистрация прошла успешно!</string>
+    <string name="fill_in_fields">Заполните все поля</string>
+    <string name="file_is_selected">"Файл выбран: "</string>
+    <string name="file_is_no_longer_selected">Файл больше не выбран</string>
+    <string name="failed_to_load_id">"Не удалось загрузить ID: "</string>
+    <string name="select_the_file">Выберите файл!</string>
 </resources>

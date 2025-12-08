@@ -44,13 +44,15 @@ object UIUtils {
 
         Toast.makeText(
             context,
-            "Файл выбран: $fileName",
+            context.getString(R.string.file_is_selected) +
+                    fileName,
             Toast.LENGTH_SHORT
         ).show()
 
         receiveButton.isEnabled = false
         receiveButton.backgroundTintList = ColorStateList.valueOf(
-            ContextCompat.getColor(context, R.color.gray)
+            ContextCompat.getColor(context,
+                R.color.gray)
         )
         receiveButton.strokeWidth = 2
     }
@@ -65,13 +67,16 @@ object UIUtils {
 
         receiveButton.isEnabled = true
         receiveButton.backgroundTintList = ColorStateList.valueOf(
-            ContextCompat.getColor(context, R.color.black)
+            ContextCompat.getColor(context,
+                R.color.black)
         )
         receiveButton.strokeWidth = 0
 
         Toast.makeText(
             context,
-            "Файл отменён",
+            context.getString(
+                R.string.file_is_no_longer_selected
+            ),
             Toast.LENGTH_SHORT
         ).show()
     }

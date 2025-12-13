@@ -29,4 +29,5 @@
     <string name="file_is_no_longer_selected">The file is no longer selected</string>
     <string name="failed_to_load_id">"Failed to load ID: "</string>
     <string name="select_the_file">Select the file!</string>
+    <string name="id_copied">ID copied</string>
 </resources>

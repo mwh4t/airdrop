@@ -91,6 +91,11 @@ class MainActivity : AppCompatActivity() {
         logoutButton.setOnClickListener {
             handleLogout()
         }
+
+        // обработчик копирования ID
+        idValueText.setOnClickListener {
+            copyIdToClipboard()
+        }
     }
 
     // загрузка ID пользователя
@@ -190,5 +195,23 @@ class MainActivity : AppCompatActivity() {
             selectedFileNameTextView,
             receiveButton
         )
+    }
+
+    // копирование ID в буфер обмена
+    private fun copyIdToClipboard() {
+        val id = idValueText.text.toString()
+        if (id.isNotEmpty() && id != "N/A" && id != "Error") {
+            val clipboard = getSystemService(CLIPBOARD_SERVICE) as
+                    android.content.ClipboardManager
+            val clip = android.content.ClipData
+                .newPlainText("User ID", id)
+            clipboard.setPrimaryClip(clip)
+
+            Toast.makeText(
+                this,
+                getString(R.string.id_copied),
+                Toast.LENGTH_SHORT
+            ).show()
+        }
     }
 }

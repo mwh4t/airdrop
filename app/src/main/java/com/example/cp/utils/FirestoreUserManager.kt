@@ -10,7 +10,7 @@ object FirestoreUserManager {
 
     private val firestore = FirebaseFirestore.getInstance()
 
-    // сохранение данных пользователя в Firestore
+    // сохранение данных в Firestore
     fun saveUser(
         context: Context,
         userId: String,
@@ -23,11 +23,10 @@ object FirestoreUserManager {
         val userRef = firestore.collection("users")
             .document(userId)
 
-        // существует ли уже документ пользователя
+        // существует ли уже документ
         userRef.get()
             .addOnSuccessListener { document ->
                 if (!document.exists()) {
-                    // создание нового документа пользователя
                     val numericId = generateNumericId()
                     val userData = hashMapOf(
                         "uid" to userId,
@@ -76,7 +75,7 @@ object FirestoreUserManager {
             }
     }
 
-    // загрузка числового ID пользователя из Firestore
+    // загрузка ID из Firestore
     fun loadUserId(
         userId: String,
         onSuccess: (String?) -> Unit,

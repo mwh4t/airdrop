@@ -29,4 +29,9 @@
     <string name="failed_to_load_id">"Не удалось загрузить ID: "</string>
     <string name="select_the_file">Выберите файл!</string>
     <string name="id_copied">ID скопирован</string>
+    <string name="enter_receiver_id">Введите ID получателя!</string>
+    <string name="id_must_contain_exactly_10_digits">ID должен содержать ровно 10 цифр!</string>
+    <string name="file_is_not_selected">Файл не выбран!</string>
+    <string name="user_has_not_been_found">Пользователь не найден!</string>
+    <string name="user_is_not_logged_in">Пользователь не авторизован</string>
 </resources>

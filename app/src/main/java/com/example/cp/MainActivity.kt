@@ -52,11 +52,11 @@ class MainActivity : AppCompatActivity() {
         // инициализация UI
         initializeUI()
 
-        // загрузка и отображение ID пользователя
+        // загрузка и отображение ID
         loadUserId()
     }
 
-    // инициализация UI элементов и обработчиков
+    // инициализация UI и обработчиков
     private fun initializeUI() {
         idValueText = findViewById(R.id.idValueText)
         fileSelectionCard = findViewById(R.id.fileSelectionCard)
@@ -71,7 +71,7 @@ class MainActivity : AppCompatActivity() {
             filePickerLauncher.launch("*/*")
         }
 
-        // обработчик долгого нажатия для сброса выбранного файла
+        // обработчик для сброса выбранного файла
         fileSelectionCard.setOnLongClickListener {
             clearFileSelection()
             true
@@ -98,7 +98,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // загрузка ID пользователя
+    // загрузка ID
     private fun loadUserId() {
         val currentUser = AuthUtils.getCurrentUser() ?: return
 
@@ -130,7 +130,10 @@ class MainActivity : AppCompatActivity() {
         if (selectedFileUri == null) {
             highlightFileSelectionError()
         } else {
-            val dialog = SendingDialogFragment.newInstance(selectedFileName ?: "")
+            val dialog = SendingDialogFragment.newInstance(
+                selectedFileName ?: "",
+                selectedFileUri!!
+            )
             dialog.show(supportFragmentManager, "SendFileDialog")
         }
     }
@@ -141,28 +144,18 @@ class MainActivity : AppCompatActivity() {
         AuthUtils.navigateToAuth(this)
     }
 
-    // обновление отображения выбранного файла
+    // обновление отображения файла
     private fun updateFileDisplay() {
         val selectedFileNameTextView = findViewById<TextView>(
             R.id.selectedFileName
         )
         selectedFileNameTextView.text = selectedFileName ?: ""
 
-        Toast.makeText(
-            this,
-            getString(R.string.file_is_selected) +
-                    selectedFileName,
-            Toast.LENGTH_SHORT
-        ).show()
-
         receiveButton.isEnabled = false
         receiveButton.backgroundTintList = ColorStateList.valueOf(
             ContextCompat.getColor(this, R.color.gray)
         )
         receiveButton.strokeWidth = 2
-
-//        val dialog = SendingDialogFragment.newInstance(selectedFileName ?: "")
-//        dialog.show(supportFragmentManager, "SendFileDialog")
     }
 
     // подсветка ошибки при отсутствии выбранного файла
@@ -197,7 +190,7 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-    // копирование ID в буфер обмена
+    // копирование ID
     private fun copyIdToClipboard() {
         val id = idValueText.text.toString()
         if (id.isNotEmpty() && id != "N/A" && id != "Error") {

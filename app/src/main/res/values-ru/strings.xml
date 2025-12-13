@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="file_sharing_app">ОБМЕН ФАЙЛАМИ</string>
     <string name="e_mail">ПОЧТА</string>
     <string name="password">ПАРОЛЬ</string>
     <string name="sign_in">ВХОД</string>
@@ -34,4 +33,5 @@
     <string name="file_is_not_selected">Файл не выбран!</string>
     <string name="user_has_not_been_found">Пользователь не найден!</string>
     <string name="user_is_not_logged_in">Пользователь не авторизован</string>
+    <string name="file_sharing_app">ОБМЕН ФАЙЛАМИ</string>
 </resources>

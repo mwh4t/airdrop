@@ -1,7 +1,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name" translatable="false">cp</string>
     <string name="default_web_client_id" translatable="false">967656059104-id80ga1gm6u5q0fgh53ei4sloqhphdka.apps.googleusercontent.com</string>
-    <string name="file_sharing_app">FILE SHARING APP</string>
+    <string name="airdrop" translatable="false">AIRDROP</string>
     <string name="e_mail">E-MAIL</string>
     <string name="password">PASSWORD</string>
     <string name="sign_in">SIGN IN</string>
@@ -35,4 +35,5 @@
     <string name="file_is_not_selected">The file is not selected!</string>
     <string name="user_has_not_been_found">The user has not been found!</string>
     <string name="user_is_not_logged_in">The user is not logged in</string>
+    <string name="file_sharing_app">FILE SHARING APP</string>
 </resources>

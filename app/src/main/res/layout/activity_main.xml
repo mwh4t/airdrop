@@ -25,7 +25,7 @@
             android:layout_gravity="start"
             android:layout_marginStart="8dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/log_out"
+            android:contentDescription="@string/history"
             android:padding="6dp"
             android:scaleType="fitCenter"
             android:src="@drawable/clock" />

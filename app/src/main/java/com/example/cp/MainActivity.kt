@@ -16,6 +16,7 @@ import com.example.cp.utils.FirestoreUserManager
 import com.example.cp.utils.UIUtils
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
+import kotlin.toString
 
 class MainActivity : AppCompatActivity() {
     private var selectedFileUri: Uri? = null
@@ -64,6 +65,7 @@ class MainActivity : AppCompatActivity() {
 
         receiveButton = findViewById<MaterialButton>(R.id.receiveButton)
         sendButton = findViewById<MaterialButton>(R.id.sendButton)
+        val historyButton = findViewById<ImageButton>(R.id.historyButton)
         val logoutButton = findViewById<ImageButton>(R.id.logoutButton)
 
         // обработчик выбора файла
@@ -87,6 +89,11 @@ class MainActivity : AppCompatActivity() {
             handleSendFile()
         }
 
+        // обработчик истории
+        historyButton.setOnClickListener {
+            handleHistory()
+        }
+
         // обработчик выхода
         logoutButton.setOnClickListener {
             handleLogout()
@@ -95,6 +102,12 @@ class MainActivity : AppCompatActivity() {
         // обработчик копирования ID
         idValueText.setOnClickListener {
             copyIdToClipboard()
+        }
+
+        // обработчик поделиться ID
+        idValueText.setOnLongClickListener {
+            shareId()
+            true
         }
     }
 
@@ -136,6 +149,12 @@ class MainActivity : AppCompatActivity() {
             )
             dialog.show(supportFragmentManager, "SendFileDialog")
         }
+    }
+
+    // обработка истории
+    private fun handleHistory() {
+        val dialog = HistoryDialogFragment()
+        dialog.show(supportFragmentManager, "HistoryDialog")
     }
 
     // обработка выхода из аккаунта
@@ -205,6 +224,24 @@ class MainActivity : AppCompatActivity() {
                 getString(R.string.id_copied),
                 Toast.LENGTH_SHORT
             ).show()
+        }
+    }
+
+    // поделиться ID
+    private fun shareId() {
+        val id = idValueText.text.toString()
+        if (id.isNotEmpty() && id != "N/A" && id != "Error") {
+            val shareIntent = android.content.Intent().apply {
+                action = android.content.Intent.ACTION_SEND
+                putExtra(android.content.Intent.EXTRA_TEXT, id)
+                type = "text/plain"
+            }
+            startActivity(
+                android.content.Intent.createChooser(
+                    shareIntent,
+                    getString(R.string.share_id)
+                )
+            )
         }
     }
 }

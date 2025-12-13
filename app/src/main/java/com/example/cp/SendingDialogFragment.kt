@@ -12,7 +12,6 @@ import com.example.cp.utils.AuthUtils
 import com.example.cp.utils.FileTransferManager
 import com.example.cp.utils.FirestoreConstants.Collections
 import com.example.cp.utils.FirestoreConstants.Fields
-import com.example.cp.utils.getErrorMessage
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 
@@ -168,7 +167,8 @@ class SendingDialogFragment : DialogFragment() {
     ) {
         Toast.makeText(
             requireContext(),
-            getErrorMessage(message),
+            getString(R.string.error,
+                message),
             Toast.LENGTH_SHORT
         ).show()
         sendButton.isEnabled = true

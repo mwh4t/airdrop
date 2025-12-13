@@ -36,4 +36,6 @@
     <string name="user_has_not_been_found">The user has not been found!</string>
     <string name="user_is_not_logged_in">The user is not logged in</string>
     <string name="file_sharing_app">FILE SHARING APP</string>
+    <string name="history">HISTORY</string>
+    <string name="share_id">Share ID</string>
 </resources>

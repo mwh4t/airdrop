@@ -38,4 +38,15 @@
     <string name="file_sharing_app">FILE SHARING APP</string>
     <string name="history">HISTORY</string>
     <string name="share_id">Share ID</string>
+    <string name="file_search">File search…</string>
+    <string name="senders_data_has_not_been_received">Sender\'s data has not been received!</string>
+    <string name="waiting_for_a_file">Waiting for a file…</string>
+    <string name="file_was_not_found">The file was not found!</string>
+    <string name="link_to_the_file_was_not_received">The link to the file was not received!</string>
+    <string name="uploading_a_file">Uploading a file…</string>
+    <string name="file_is_saved">The file is saved!</string>
+    <string name="file_could_not_be_created">The file could not be created!</string>
+    <string name="enter_sender_id_lk">Enter sender ID!</string>
+    <string name="file_was_received_successfully">The file was received successfully!</string>
+    <string name="file_has_been_sent_successfully">The file has been sent successfully!</string>
 </resources>

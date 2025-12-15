@@ -1,5 +1,6 @@
 package com.example.cp
 
+import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import android.net.Uri
 import android.os.Bundle
@@ -16,7 +17,6 @@ import com.example.cp.utils.FirestoreUserManager
 import com.example.cp.utils.UIUtils
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
-import kotlin.toString
 
 class MainActivity : AppCompatActivity() {
     private var selectedFileUri: Uri? = null
@@ -112,6 +112,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     // загрузка ID
+    @SuppressLint("SetTextI18n")
     private fun loadUserId() {
         val currentUser = AuthUtils.getCurrentUser() ?: return
 

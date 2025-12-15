@@ -84,7 +84,9 @@ class SendingDialogFragment : DialogFragment() {
                 recipientId.length != 10 || !recipientId.all { it.isDigit() } -> {
                     Toast.makeText(
                         requireContext(),
-                        getString(R.string.id_must_contain_exactly_10_digits),
+                        getString(
+                            R.string.id_must_contain_exactly_10_digits
+                        ),
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -128,7 +130,9 @@ class SendingDialogFragment : DialogFragment() {
                 when {
                     documents.isEmpty -> {
                         showErrorAndEnableButtons(
-                            getString(R.string.user_has_not_been_found),
+                            getString(
+                                R.string.user_has_not_been_found
+                            ),
                             sendButton,
                             cancelButton
                         )
@@ -142,7 +146,10 @@ class SendingDialogFragment : DialogFragment() {
                             uploadFile(receiverFirebaseUid)
                         } else {
                             showErrorAndEnableButtons(
-                                "Ошибка получения данных пользователя",
+                                getString(R.string.error,
+                                    getString(
+                                        R.string.user_has_not_been_found)
+                                ),
                                 sendButton,
                                 cancelButton
                             )
@@ -190,7 +197,7 @@ class SendingDialogFragment : DialogFragment() {
 
         // создание диалога прогресса
         progressDialog = ProgressDialog(requireContext()).apply {
-            setMessage("Загрузка файла...")
+            setMessage(getString(R.string.uploading_a_file))
             setProgressStyle(ProgressDialog.STYLE_HORIZONTAL)
             setCancelable(false)
             max = 100
@@ -210,7 +217,7 @@ class SendingDialogFragment : DialogFragment() {
                 progressDialog?.dismiss()
                 Toast.makeText(
                     requireContext(),
-                    "Файл '$fileName' успешно отправлен!",
+                    getString(R.string.file_has_been_sent_successfully),
                     Toast.LENGTH_LONG
                 ).show()
                 dismiss()
@@ -219,7 +226,8 @@ class SendingDialogFragment : DialogFragment() {
                 progressDialog?.dismiss()
                 Toast.makeText(
                     requireContext(),
-                    "Ошибка загрузки файла: ${e.message}",
+                    getString(R.string.error,
+                        e.message),
                     Toast.LENGTH_LONG
                 ).show()
                 dismiss()

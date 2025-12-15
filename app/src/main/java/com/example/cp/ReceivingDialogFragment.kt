@@ -32,7 +32,10 @@ class ReceivingDialogFragment : DialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_dialog_receiving, container, false)
+        return inflater.inflate(
+            R.layout.fragment_dialog_receiving,
+            container, false
+        )
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -55,7 +58,7 @@ class ReceivingDialogFragment : DialogFragment() {
             if (senderId.isEmpty()) {
                 Toast.makeText(
                     requireContext(),
-                    "Введите ID отправителя!",
+                    getString(R.string.enter_sender_id_lk),
                     Toast.LENGTH_SHORT
                 ).show()
             } else {
@@ -75,7 +78,10 @@ class ReceivingDialogFragment : DialogFragment() {
         if (currentUser == null) {
             Toast.makeText(
                 requireContext(),
-                "Ошибка: пользователь не авторизован",
+                getString(
+                    R.string.error,
+                    getString(R.string.user_is_not_logged_in)
+                ),
                 Toast.LENGTH_SHORT
             ).show()
             dismiss()
@@ -93,7 +99,7 @@ class ReceivingDialogFragment : DialogFragment() {
             onSuccess = { fileTransfer ->
                 Toast.makeText(
                     requireContext(),
-                    "Файл ${fileTransfer.fileName} успешно получен!",
+                    getString(R.string.file_was_received_successfully),
                     Toast.LENGTH_LONG
                 ).show()
 
@@ -113,7 +119,10 @@ class ReceivingDialogFragment : DialogFragment() {
 
                 Toast.makeText(
                     requireContext(),
-                    "Ошибка: ${exception.message}",
+                    getString(
+                        R.string.error,
+                        exception.message
+                    ),
                     Toast.LENGTH_LONG
                 ).show()
             }

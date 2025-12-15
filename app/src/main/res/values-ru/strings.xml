@@ -36,4 +36,15 @@
     <string name="file_sharing_app">ОБМЕН ФАЙЛАМИ</string>
     <string name="history">ИСТОРИЯ</string>
     <string name="share_id">Поделиться ID</string>
+    <string name="file_search">Поиск файла…</string>
+    <string name="senders_data_has_not_been_received">Данные отправителя не получены!</string>
+    <string name="waiting_for_a_file">Ожидание файла…</string>
+    <string name="file_was_not_found">Файл не найден!</string>
+    <string name="link_to_the_file_was_not_received">Ссылка на файл не получена!</string>
+    <string name="uploading_a_file">Загрузка файла…</string>
+    <string name="file_is_saved">Файл сохранён!</string>
+    <string name="file_could_not_be_created">Не удалось создать файл!</string>
+    <string name="enter_sender_id_lk">Введите ID отправителя!</string>
+    <string name="file_was_received_successfully">Файл успешно получен!</string>
+    <string name="file_has_been_sent_successfully">Файл успешно отправлен!</string>
 </resources>

@@ -1,8 +1,6 @@
 package com.example.cp
 
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +9,8 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
+import com.example.cp.utils.AuthUtils
+import com.example.cp.utils.FileTransferManager
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 
@@ -71,22 +71,53 @@ class ReceivingDialogFragment : DialogFragment() {
         buttonsLayout.visibility = View.GONE
         senderIdInput.isEnabled = false
 
-        // заглушка
-        Toast.makeText(
-            requireContext(),
-            "Получение файла от пользователя $senderId...",
-            Toast.LENGTH_LONG
-        ).show()
-
-        // результат
-        Handler(Looper.getMainLooper()).postDelayed({
+        val currentUser = AuthUtils.getCurrentUser()
+        if (currentUser == null) {
             Toast.makeText(
                 requireContext(),
-                "Файл успешно получен! (заглушка)",
-                Toast.LENGTH_LONG
+                "Ошибка: пользователь не авторизован",
+                Toast.LENGTH_SHORT
             ).show()
             dismiss()
-        }, 3000)
+            return
+        }
+
+        // получение файла
+        FileTransferManager.receiveFile(
+            context = requireContext(),
+            receiverUid = currentUser.uid,
+            senderId = senderId,
+            onProgress = { status ->
+                loadingText.text = status
+            },
+            onSuccess = { fileTransfer ->
+                Toast.makeText(
+                    requireContext(),
+                    "Файл ${fileTransfer.fileName} успешно получен!",
+                    Toast.LENGTH_LONG
+                ).show()
+
+                // закрытие диалога
+                view?.postDelayed({
+                    if (isAdded && !isDetached) {
+                        dismiss()
+                    }
+                }, 800)
+            },
+            onFailure = { exception ->
+                // скрытие индикатора загрузки
+                loadingProgressBar.visibility = View.GONE
+                loadingText.visibility = View.GONE
+                buttonsLayout.visibility = View.VISIBLE
+                senderIdInput.isEnabled = true
+
+                Toast.makeText(
+                    requireContext(),
+                    "Ошибка: ${exception.message}",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        )
     }
 
     override fun onStart() {

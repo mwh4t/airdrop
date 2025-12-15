@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <!-- внешнее хранилище приложения -->
+    <external-files-path 
+        name="downloads" 
+        path="Downloads/" />
+    <!-- внутреннее хранилище приложения -->
+    <files-path 
+        name="files" 
+        path="." />
+    <!-- кэш приложения -->
+    <cache-path 
+        name="cache" 
+        path="." />
+    <!-- Downloads -->
+    <external-path
+        name="external_downloads"
+        path="Download/" />
+    <!-- внешнее хранилище -->
+    <external-path
+        name="external_storage"
+        path="." />
+</paths>

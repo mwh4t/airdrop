@@ -53,7 +53,7 @@ object FileTransferManager {
             // генерация ID для передачи
             val transferId = UUID.randomUUID().toString()
 
-            // загрузка числовых ID отправителя и получателя
+            // загрузка ID отправителя и получателя
             loadUserNumericIds(
                 senderUid = senderUid,
                 receiverUid = receiverUid,
@@ -107,7 +107,7 @@ object FileTransferManager {
         }
     }
 
-    // загрузка ID пользователей
+    // загрузка ID
     private fun loadUserNumericIds(
         senderUid: String,
         receiverUid: String,
@@ -170,7 +170,7 @@ object FileTransferManager {
         )
         batch.set(transferRef, transferData)
 
-        // атомарная запись обоих документов
+        // атомарная запись документов
         batch.commit()
             .addOnSuccessListener { onSuccess() }
             .addOnFailureListener(onFailure)
@@ -198,5 +198,312 @@ object FileTransferManager {
             bytes < 1024 * 1024 * 1024 -> "${bytes / (1024 * 1024)} MB"
             else -> "${bytes / (1024 * 1024 * 1024)} GB"
         }
+    }
+
+    // получение файла по ID отправителя
+    fun receiveFile(
+        context: Context,
+        receiverUid: String,
+        senderId: String,
+        onProgress: ((String) -> Unit)? = null,
+        onSuccess: (FileTransfer) -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        onProgress?.invoke("Поиск файла...")
+
+        // получение UID по ID
+        firestore.collection(Collections.USERS)
+            .whereEqualTo(Fields.ID, senderId)
+            .get()
+            .addOnSuccessListener { userSnapshot ->
+                if (userSnapshot.isEmpty) {
+                    onFailure(Exception("Пользователь с ID $senderId не найден"))
+                    return@addOnSuccessListener
+                }
+
+                val senderUid = userSnapshot.documents[0].getString(Fields.UID)
+                if (senderUid == null) {
+                    onFailure(Exception("Ошибка получения данных отправителя"))
+                    return@addOnSuccessListener
+                }
+
+                // поиск pending файла
+                onProgress?.invoke("Ожидание файла...")
+
+                firestore.collection(Collections.FILES)
+                    .whereEqualTo(Fields.SENDER_UID, senderUid)
+                    .whereEqualTo(Fields.RECEIVER_UID, receiverUid)
+                    .whereEqualTo(Fields.STATUS, TransferStatus.PENDING)
+                    .get()
+                    .addOnSuccessListener { filesSnapshot ->
+                        if (filesSnapshot.isEmpty) {
+                            onFailure(Exception("Файл от пользователя $senderId не найден"))
+                            return@addOnSuccessListener
+                        }
+
+                        val fileDoc = filesSnapshot.documents[0]
+                        val fileId = fileDoc.id
+                        val fileName = fileDoc.getString(Fields.FILE_NAME) ?: "file"
+                        val storageUrl = fileDoc.getString(Fields.STORAGE_URL)
+
+                        if (storageUrl == null) {
+                            onFailure(Exception("Ошибка получения ссылки на файл"))
+                            return@addOnSuccessListener
+                        }
+
+                        // скачивание
+                        onProgress?.invoke("Загрузка файла...")
+                        downloadFile(
+                            context = context,
+                            storageUrl = storageUrl,
+                            fileName = fileName,
+                            onDownloadProgress = { progress ->
+                                onProgress?.invoke("Загрузка: $progress%")
+                            },
+                            onSuccess = {
+                                // обновление статуса на received
+                                updateFileStatus(
+                                    fileId = fileId,
+                                    status = TransferStatus.RECEIVED,
+                                    onSuccess = {
+                                        // создание объекта для возврата
+                                        val fileTransfer = FileTransfer(
+                                            id = fileId,
+                                            fileName = fileDoc.getString(Fields.FILE_NAME) ?: "",
+                                            fileSize = fileDoc.getLong(Fields.FILE_SIZE) ?: 0,
+                                            fileType = fileDoc.getString(Fields.FILE_TYPE) ?: "",
+                                            senderId = fileDoc.getString(Fields.SENDER_ID) ?: "",
+                                            receiverId = fileDoc.getString(Fields.RECEIVER_ID) ?: "",
+                                            senderUid = fileDoc.getString(Fields.SENDER_UID) ?: "",
+                                            receiverUid = fileDoc.getString(Fields.RECEIVER_UID) ?: "",
+                                            storageUrl = storageUrl,
+                                            status = TransferStatus.RECEIVED
+                                        )
+                                        onSuccess(fileTransfer)
+                                    },
+                                    onFailure = onFailure
+                                )
+                            },
+                            onFailure = onFailure
+                        )
+                    }
+                    .addOnFailureListener(onFailure)
+            }
+            .addOnFailureListener(onFailure)
+    }
+
+    // скачивание файла из Storage
+    private fun downloadFile(
+        context: Context,
+        storageUrl: String,
+        fileName: String,
+        onDownloadProgress: ((Int) -> Unit)? = null,
+        onSuccess: () -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        try {
+            val storageRef = storage.getReferenceFromUrl(storageUrl)
+
+            // создание временного файла
+            val tempFile = java.io.File.createTempFile("download_", ".tmp", context.cacheDir)
+
+            storageRef.getFile(tempFile)
+                .addOnProgressListener { taskSnapshot ->
+                    val progress = (100.0 * taskSnapshot.bytesTransferred /
+                            taskSnapshot.totalByteCount).toInt()
+                    onDownloadProgress?.invoke(progress)
+                }
+                .addOnSuccessListener {
+                    // копирование файла в Downloads
+                    saveToDownloads(context, tempFile, fileName, onSuccess, onFailure)
+                }
+                .addOnFailureListener { e ->
+                    tempFile.delete()
+                    onFailure(e)
+                }
+        } catch (e: Exception) {
+            onFailure(e)
+        }
+    }
+
+    // сохранение файла в Downloads
+    private fun saveToDownloads(
+        context: Context,
+        sourceFile: java.io.File,
+        fileName: String,
+        onSuccess: () -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        try {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                // MediaStore
+                val resolver = context.contentResolver
+                val contentValues = android.content.ContentValues().apply {
+                    put(android.provider.MediaStore.MediaColumns.DISPLAY_NAME, fileName)
+                    put(android.provider.MediaStore.MediaColumns.MIME_TYPE, fileName.getMimeType())
+                    put(android.provider.MediaStore.MediaColumns.RELATIVE_PATH,
+                        android.os.Environment.DIRECTORY_DOWNLOADS)
+                }
+
+                val uri = resolver.insert(
+                    android.provider.MediaStore.Downloads.EXTERNAL_CONTENT_URI,
+                    contentValues
+                )
+
+                if (uri != null) {
+                    resolver.openOutputStream(uri)?.use { outputStream ->
+                        sourceFile.inputStream().use { inputStream ->
+                            inputStream.copyTo(outputStream)
+                        }
+                    }
+                    sourceFile.delete()
+
+                    android.widget.Toast.makeText(
+                        context,
+                        "Файл сохранен в Загрузки",
+                        android.widget.Toast.LENGTH_LONG
+                    ).show()
+
+                    // открытие
+                    openDownloadedFile(context, uri, fileName)
+                    onSuccess()
+                } else {
+                    sourceFile.delete()
+                    onFailure(Exception("Не удалось создать файл в Downloads"))
+                }
+            } else {
+                // прямой доступ
+                val downloadsDir = android.os.Environment.getExternalStoragePublicDirectory(
+                    android.os.Environment.DIRECTORY_DOWNLOADS
+                )
+                if (!downloadsDir.exists()) {
+                    downloadsDir.mkdirs()
+                }
+
+                val destinationFile = java.io.File(downloadsDir, fileName)
+                sourceFile.copyTo(destinationFile, overwrite = true)
+                sourceFile.delete()
+
+                // уведомление системы о новом файле
+                val intent = android.content.Intent(android.content.Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
+                intent.data = android.net.Uri.fromFile(destinationFile)
+                context.sendBroadcast(intent)
+
+                android.widget.Toast.makeText(
+                    context,
+                    "Файл сохранен в Загрузки",
+                    android.widget.Toast.LENGTH_LONG
+                ).show()
+
+                // открытие через FileProvider
+                android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+                    openFileFromPath(context, destinationFile)
+                }, 500)
+
+                onSuccess()
+            }
+        } catch (e: Exception) {
+            sourceFile.delete()
+            onFailure(e)
+        }
+    }
+
+    // открытие из MediaStore
+    private fun openDownloadedFile(context: Context, uri: android.net.Uri, fileName: String) {
+        try {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                val intent = android.content.Intent(android.content.Intent.ACTION_VIEW).apply {
+                    setDataAndType(
+                        android.provider.MediaStore.Downloads.EXTERNAL_CONTENT_URI,
+                        "resource/folder"
+                    )
+                    flags = android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+                }
+
+                try {
+                    context.startActivity(intent)
+                    return
+                } catch (e: android.content.ActivityNotFoundException) { }
+            }
+
+            openFilesApp(context)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            showDownloadedMessage(context)
+        }
+    }
+
+    // открытие приложения Файлы
+    private fun openFilesApp(context: Context) {
+        try {
+            val filesIntent = android.content.Intent(android.content.Intent.ACTION_GET_CONTENT).apply {
+                type = "*/*"
+                flags = android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+            }
+            context.startActivity(filesIntent)
+        } catch (e: Exception) {
+            showDownloadedMessage(context)
+        }
+    }
+
+    // открытие файла по пути
+    private fun openFileFromPath(context: Context, file: java.io.File) {
+        try {
+            val downloadsDir = android.os.Environment.getExternalStoragePublicDirectory(
+                android.os.Environment.DIRECTORY_DOWNLOADS
+            )
+
+            val uri = androidx.core.content.FileProvider.getUriForFile(
+                context,
+                "${context.packageName}.fileprovider",
+                downloadsDir
+            )
+
+            val intent = android.content.Intent(android.content.Intent.ACTION_VIEW).apply {
+                setDataAndType(uri, "resource/folder")
+                flags = android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                        android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+            }
+
+            try {
+                context.startActivity(intent)
+            } catch (e: android.content.ActivityNotFoundException) {
+                openFilesApp(context)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            showDownloadedMessage(context)
+        }
+    }
+
+    // сообщение о сохранении файла
+    private fun showDownloadedMessage(context: Context) {
+        android.widget.Toast.makeText(
+            context,
+            "Файл сохранен в папке Загрузки",
+            android.widget.Toast.LENGTH_SHORT
+        ).show()
+    }
+
+    // обновление статуса файла
+    private fun updateFileStatus(
+        fileId: String,
+        status: String,
+        onSuccess: () -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        val batch = firestore.batch()
+
+        // обновление в коллекции files
+        val fileRef = firestore.collection(Collections.FILES).document(fileId)
+        batch.update(fileRef, Fields.STATUS, status)
+
+        // обновление в коллекции transfers
+        val transferRef = firestore.collection(Collections.TRANSFERS).document(fileId)
+        batch.update(transferRef, Fields.STATUS, status)
+
+        batch.commit()
+            .addOnSuccessListener { onSuccess() }
+            .addOnFailureListener(onFailure)
     }
 }

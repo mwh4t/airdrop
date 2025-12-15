@@ -25,9 +25,16 @@ class AuthActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_auth)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main))
+        { v, insets ->
+            val systemBars = insets.getInsets(
+                WindowInsetsCompat
+                    .Type.systemBars()
+            )
+            v.setPadding(
+                systemBars.left, systemBars.top,
+                systemBars.right, systemBars.bottom
+            )
             insets
         }
 
@@ -62,20 +69,20 @@ class AuthActivity : AppCompatActivity() {
         // вход
         findViewById<MaterialButton>(R.id.loginButton)
             .setOnClickListener {
-            handleSignIn()
-        }
+                handleSignIn()
+            }
 
         // регистрация
         findViewById<MaterialButton>(R.id.registerButton)
             .setOnClickListener {
-            handleRegister()
-        }
+                handleRegister()
+            }
 
         // google авторизация
         findViewById<MaterialButton>(R.id.googleButton)
             .setOnClickListener {
-            handleGoogleSignIn()
-        }
+                handleGoogleSignIn()
+            }
     }
 
     // обработка входа через email
@@ -107,7 +114,10 @@ class AuthActivity : AppCompatActivity() {
 
     // переход на главный экран
     private fun navigateToMain() {
-        val intent = Intent(this, MainActivity::class.java)
+        val intent = Intent(
+            this,
+            MainActivity::class.java
+        )
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or
                 Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)

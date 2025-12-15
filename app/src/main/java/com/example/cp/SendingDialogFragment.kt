@@ -20,12 +20,22 @@ class SendingDialogFragment : DialogFragment() {
     private var fileName: String? = null
     private var fileUri: Uri? = null
     private var progressDialog: ProgressDialog? = null
+    private var onFileSentListener: OnFileSentListener? = null
+
+    interface OnFileSentListener {
+        fun onFileSent()
+    }
+
+    fun setOnFileSentListener(listener: OnFileSentListener) {
+        this.onFileSentListener = listener
+    }
 
     companion object {
         private const val ARG_FILE_NAME = "file_name"
         private const val ARG_FILE_URI = "file_uri"
 
-        fun newInstance(fileName: String, fileUri: Uri): SendingDialogFragment {
+        fun newInstance(fileName: String, fileUri: Uri):
+                SendingDialogFragment {
             val fragment = SendingDialogFragment()
             val args = Bundle()
             args.putString(ARG_FILE_NAME, fileName)
@@ -107,7 +117,8 @@ class SendingDialogFragment : DialogFragment() {
 
                     // поиск получателя по ID и загрузка файла
                     findReceiverAndUploadFile(
-                        recipientId, sendButton, cancelButton
+                        recipientId,
+                        sendButton, cancelButton
                     )
                 }
             }
@@ -146,9 +157,11 @@ class SendingDialogFragment : DialogFragment() {
                             uploadFile(receiverFirebaseUid)
                         } else {
                             showErrorAndEnableButtons(
-                                getString(R.string.error,
+                                getString(
+                                    R.string.error,
                                     getString(
-                                        R.string.user_has_not_been_found)
+                                        R.string.user_has_not_been_found
+                                    )
                                 ),
                                 sendButton,
                                 cancelButton
@@ -174,8 +187,10 @@ class SendingDialogFragment : DialogFragment() {
     ) {
         Toast.makeText(
             requireContext(),
-            getString(R.string.error,
-                message),
+            getString(
+                R.string.error,
+                message
+            ),
             Toast.LENGTH_SHORT
         ).show()
         sendButton.isEnabled = true
@@ -187,8 +202,10 @@ class SendingDialogFragment : DialogFragment() {
         if (currentUser == null) {
             Toast.makeText(
                 requireContext(),
-                getString(R.string.error,
-                    getString(R.string.user_is_not_logged_in)),
+                getString(
+                    R.string.error,
+                    getString(R.string.user_is_not_logged_in)
+                ),
                 Toast.LENGTH_SHORT
             ).show()
             dismiss()
@@ -220,14 +237,17 @@ class SendingDialogFragment : DialogFragment() {
                     getString(R.string.file_has_been_sent_successfully),
                     Toast.LENGTH_LONG
                 ).show()
+                onFileSentListener?.onFileSent()
                 dismiss()
             },
             onFailure = { e ->
                 progressDialog?.dismiss()
                 Toast.makeText(
                     requireContext(),
-                    getString(R.string.error,
-                        e.message),
+                    getString(
+                        R.string.error,
+                        e.message
+                    ),
                     Toast.LENGTH_LONG
                 ).show()
                 dismiss()

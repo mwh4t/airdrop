@@ -148,6 +148,12 @@ class MainActivity : AppCompatActivity() {
                 selectedFileName ?: "",
                 selectedFileUri!!
             )
+            dialog.setOnFileSentListener(object : SendingDialogFragment
+            .OnFileSentListener {
+                override fun onFileSent() {
+                    clearFileSelection()
+                }
+            })
             dialog.show(supportFragmentManager, "SendFileDialog")
         }
     }

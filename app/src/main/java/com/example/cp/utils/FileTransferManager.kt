@@ -243,7 +243,11 @@ object FileTransferManager {
                 }
 
                 // поиск pending файла
-                onProgress?.invoke(context.getString(R.string.waiting_for_a_file))
+                onProgress?.invoke(
+                    context.getString(
+                        R.string.waiting_for_a_file
+                    )
+                )
 
                 firestore.collection(Collections.FILES)
                     .whereEqualTo(Fields.SENDER_UID, senderUid)
@@ -281,7 +285,11 @@ object FileTransferManager {
                         }
 
                         // скачивание
-                        onProgress?.invoke(context.getString(R.string.uploading_a_file))
+                        onProgress?.invoke(
+                            context.getString(
+                                R.string.uploading_a_file
+                            )
+                        )
                         downloadFile(
                             context = context,
                             storageUrl = storageUrl,
@@ -333,7 +341,9 @@ object FileTransferManager {
         onFailure: (Exception) -> Unit
     ) {
         try {
-            val storageRef = storage.getReferenceFromUrl(storageUrl)
+            val storageRef = storage.getReferenceFromUrl(
+                storageUrl
+            )
 
             // создание временного файла
             val tempFile = java.io.File.createTempFile(
@@ -376,8 +386,14 @@ object FileTransferManager {
                 // MediaStore
                 val resolver = context.contentResolver
                 val contentValues = android.content.ContentValues().apply {
-                    put(android.provider.MediaStore.MediaColumns.DISPLAY_NAME, fileName)
-                    put(android.provider.MediaStore.MediaColumns.MIME_TYPE, fileName.getMimeType())
+                    put(
+                        android.provider.MediaStore.MediaColumns.DISPLAY_NAME,
+                        fileName
+                    )
+                    put(
+                        android.provider.MediaStore.MediaColumns.MIME_TYPE,
+                        fileName.getMimeType()
+                    )
                     put(
                         android.provider.MediaStore.MediaColumns.RELATIVE_PATH,
                         android.os.Environment.DIRECTORY_DOWNLOADS
@@ -385,7 +401,8 @@ object FileTransferManager {
                 }
 
                 val uri = resolver.insert(
-                    android.provider.MediaStore.Downloads.EXTERNAL_CONTENT_URI,
+                    android.provider.MediaStore.Downloads
+                        .EXTERNAL_CONTENT_URI,
                     contentValues
                 )
 
@@ -418,15 +435,21 @@ object FileTransferManager {
                 }
             } else {
                 // прямой доступ
-                val downloadsDir = android.os.Environment.getExternalStoragePublicDirectory(
-                    android.os.Environment.DIRECTORY_DOWNLOADS
-                )
+                val downloadsDir = android.os.Environment
+                    .getExternalStoragePublicDirectory(
+                        android.os.Environment.DIRECTORY_DOWNLOADS
+                    )
                 if (!downloadsDir.exists()) {
                     downloadsDir.mkdirs()
                 }
 
-                val destinationFile = java.io.File(downloadsDir, fileName)
-                sourceFile.copyTo(destinationFile, overwrite = true)
+                val destinationFile = java.io.File(
+                    downloadsDir, fileName
+                )
+                sourceFile.copyTo(
+                    destinationFile,
+                    overwrite = true
+                )
                 sourceFile.delete()
 
                 // уведомление системы о новом файле
@@ -446,7 +469,7 @@ object FileTransferManager {
                 android.os.Handler(android.os.Looper.getMainLooper())
                     .postDelayed({
                         openFileFromPath(context, destinationFile)
-                    }, 500)
+                    }, 3000)
 
                 onSuccess()
             }
@@ -457,7 +480,10 @@ object FileTransferManager {
     }
 
     // открытие из MediaStore
-    private fun openDownloadedFile(context: Context, uri: android.net.Uri, fileName: String) {
+    private fun openDownloadedFile(
+        context: Context, uri: android.net.Uri,
+        fileName: String
+    ) {
         try {
             if (android.os.Build.VERSION.SDK_INT >=
                 android.os.Build.VERSION_CODES.Q
@@ -557,17 +583,81 @@ object FileTransferManager {
         val batch = firestore.batch()
 
         // обновление в коллекции files
-        val fileRef = firestore.collection(Collections.FILES)
+        val fileRef = firestore.collection(
+            Collections.FILES
+        )
             .document(fileId)
         batch.update(fileRef, Fields.STATUS, status)
 
         // обновление в коллекции transfers
-        val transferRef = firestore.collection(Collections.TRANSFERS)
+        val transferRef = firestore.collection(
+            Collections.TRANSFERS
+        )
             .document(fileId)
-        batch.update(transferRef, Fields.STATUS, status)
+        batch.update(
+            transferRef,
+            Fields.STATUS, status
+        )
 
         batch.commit()
             .addOnSuccessListener { onSuccess() }
+            .addOnFailureListener(onFailure)
+    }
+
+    // получение истории передач
+    fun getHistory(
+        userUid: String,
+        onSuccess: (List<FileTransfer>) -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        firestore.collection(Collections.FILES)
+            .whereEqualTo(Fields.SENDER_UID, userUid)
+            .get()
+            .addOnSuccessListener { sentSnapshot ->
+                firestore.collection(Collections.FILES)
+                    .whereEqualTo(Fields.RECEIVER_UID, userUid)
+                    .get()
+                    .addOnSuccessListener { receivedSnapshot ->
+                        val historyList = mutableListOf<FileTransfer>()
+
+                        // отправленные файлы
+                        for (doc in sentSnapshot.documents) {
+                            val transfer = doc.toObject(
+                                FileTransfer::class.java
+                            )
+                            if (transfer != null) {
+                                historyList.add(
+                                    transfer.copy(id = doc.id)
+                                )
+                            }
+                        }
+
+                        // полученные файлы
+                        for (doc in receivedSnapshot.documents) {
+                            val transfer = doc.toObject(
+                                FileTransfer::class.java
+                            )
+                            if (transfer != null) {
+                                historyList.add(
+                                    transfer.copy(id = doc.id)
+                                )
+                            }
+                        }
+
+                        // сортировка по дате
+                        historyList.sortByDescending {
+                            when (val timestamp = it.uploadedAt) {
+                                is com.google.firebase.Timestamp ->
+                                    timestamp.seconds
+
+                                else -> 0L
+                            }
+                        }
+
+                        onSuccess(historyList)
+                    }
+                    .addOnFailureListener(onFailure)
+            }
             .addOnFailureListener(onFailure)
     }
 }

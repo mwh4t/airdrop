@@ -49,4 +49,7 @@
     <string name="enter_sender_id_lk">Enter sender ID!</string>
     <string name="file_was_received_successfully">The file was received successfully!</string>
     <string name="file_has_been_sent_successfully">The file has been sent successfully!</string>
+    <string name="history_is_empty">History is empty</string>
+    <string name="close">CLOSE</string>
+    <string name="transfer_info">%1$s -> %2$s</string>
 </resources>

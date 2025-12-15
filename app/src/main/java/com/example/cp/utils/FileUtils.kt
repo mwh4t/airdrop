@@ -11,7 +11,8 @@ object FileUtils {
         var fileName = "unknown"
         val cursor = context.contentResolver.query(
             uri,
-            null, null, null, null
+            null, null,
+            null, null
         )
         cursor?.use {
             if (it.moveToFirst()) {

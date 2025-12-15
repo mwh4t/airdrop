@@ -42,8 +42,12 @@ class ReceivingDialogFragment : DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         senderIdInput = view.findViewById(R.id.senderIdInput)
-        val cancelButton = view.findViewById<MaterialButton>(R.id.cancelReceiveButton)
-        val receiveButton = view.findViewById<MaterialButton>(R.id.receiveDialogButton)
+        val cancelButton = view.findViewById<MaterialButton>(
+            R.id.cancelReceiveButton
+        )
+        val receiveButton = view.findViewById<MaterialButton>(
+            R.id.receiveDialogButton
+        )
         loadingProgressBar = view.findViewById(R.id.loadingProgressBar)
         loadingText = view.findViewById(R.id.loadingText)
         buttonsLayout = view.findViewById(R.id.buttonsLayout)
@@ -80,7 +84,9 @@ class ReceivingDialogFragment : DialogFragment() {
                 requireContext(),
                 getString(
                     R.string.error,
-                    getString(R.string.user_is_not_logged_in)
+                    getString(
+                        R.string.user_is_not_logged_in
+                    )
                 ),
                 Toast.LENGTH_SHORT
             ).show()
@@ -99,7 +105,9 @@ class ReceivingDialogFragment : DialogFragment() {
             onSuccess = { fileTransfer ->
                 Toast.makeText(
                     requireContext(),
-                    getString(R.string.file_was_received_successfully),
+                    getString(
+                        R.string.file_was_received_successfully
+                    ),
                     Toast.LENGTH_LONG
                 ).show()
 
@@ -108,7 +116,7 @@ class ReceivingDialogFragment : DialogFragment() {
                     if (isAdded && !isDetached) {
                         dismiss()
                     }
-                }, 800)
+                }, 1000)
             },
             onFailure = { exception ->
                 // скрытие индикатора загрузки

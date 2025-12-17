@@ -233,7 +233,8 @@ object FileTransferManager {
                 if (senderUid == null) {
                     onFailure(
                         Exception(
-                            context.getString(R.string.error,
+                            context.getString(
+                                R.string.error,
                                 context.getString(
                                     R.string.senders_data_has_not_been_received
                                 )
@@ -275,7 +276,8 @@ object FileTransferManager {
                         if (storageUrl == null) {
                             onFailure(
                                 Exception(
-                                    context.getString(R.string.error,
+                                    context.getString(
+                                        R.string.error,
                                         context.getString(
                                             R.string.link_to_the_file_was_not_received
                                         )
@@ -415,12 +417,6 @@ object FileTransferManager {
                     }
                     sourceFile.delete()
 
-                    android.widget.Toast.makeText(
-                        context,
-                        context.getString(R.string.file_is_saved),
-                        android.widget.Toast.LENGTH_LONG
-                    ).show()
-
                     // открытие
                     openDownloadedFile(context, uri, fileName)
                     onSuccess()
@@ -460,17 +456,8 @@ object FileTransferManager {
                 intent.data = android.net.Uri.fromFile(destinationFile)
                 context.sendBroadcast(intent)
 
-                android.widget.Toast.makeText(
-                    context,
-                    context.getString(R.string.file_is_saved),
-                    android.widget.Toast.LENGTH_LONG
-                ).show()
-
-                // открытие через FileProvider
-                android.os.Handler(android.os.Looper.getMainLooper())
-                    .postDelayed({
-                        openFileFromPath(context, destinationFile)
-                    }, 3000)
+                // открытие папки Downloads
+                openDownloadsFolder(context)
 
                 onSuccess()
             }
@@ -518,50 +505,57 @@ object FileTransferManager {
     // открытие приложения Файлы
     private fun openFilesApp(context: Context) {
         try {
-            val filesIntent = android.content.Intent(
-                android.content
-                    .Intent.ACTION_GET_CONTENT
-            ).apply {
-                type = "*/*"
-                flags = android.content.Intent.FLAG_ACTIVITY_NEW_TASK
-            }
-            context.startActivity(filesIntent)
+            val intent = android.content.Intent(
+                android.content.Intent.ACTION_OPEN_DOCUMENT
+            )
+            intent.addCategory(
+                android.content.Intent
+                    .CATEGORY_OPENABLE
+            )
+            intent.type = "*/*"
+            intent.addFlags(
+                android.content.Intent
+                    .FLAG_ACTIVITY_NEW_TASK
+            )
+
+            context.startActivity(intent)
         } catch (e: Exception) {
+            e.printStackTrace()
             showDownloadedMessage(context)
         }
     }
 
-    // открытие файла по пути
-    private fun openFileFromPath(context: Context, file: java.io.File) {
+    // открытие папки Downloads
+    private fun openDownloadsFolder(context: Context) {
         try {
-            val downloadsDir = android.os.Environment
-                .getExternalStoragePublicDirectory(
-                    android.os.Environment.DIRECTORY_DOWNLOADS
-                )
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build
+                    .VERSION_CODES.Q
+            ) {
+                // MediaStore
+                val intent = android.content.Intent(
+                    android.content.Intent.ACTION_VIEW
+                ).apply {
+                    setDataAndType(
+                        android.provider.MediaStore.Downloads
+                            .EXTERNAL_CONTENT_URI,
+                        "resource/folder"
+                    )
+                    flags = android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+                }
 
-            val uri = androidx.core.content.FileProvider.getUriForFile(
-                context,
-                "${context.packageName}.fileprovider",
-                downloadsDir
-            )
-
-            val intent = android.content.Intent(
-                android.content
-                    .Intent.ACTION_VIEW
-            ).apply {
-                setDataAndType(uri, "resource/folder")
-                flags = android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION or
-                        android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+                try {
+                    context.startActivity(intent)
+                    return
+                } catch (e: android.content.ActivityNotFoundException) {
+                    // файловый менеджер
+                }
             }
 
-            try {
-                context.startActivity(intent)
-            } catch (e: android.content.ActivityNotFoundException) {
-                openFilesApp(context)
-            }
+            // файловый менеджер
+            openFilesApp(context)
         } catch (e: Exception) {
             e.printStackTrace()
-            showDownloadedMessage(context)
+            openFilesApp(context)
         }
     }
 
@@ -588,7 +582,10 @@ object FileTransferManager {
             Collections.FILES
         )
             .document(fileId)
-        batch.update(fileRef, Fields.STATUS, status)
+        batch.update(
+            fileRef, Fields.STATUS,
+            status
+        )
 
         // обновление в коллекции transfers
         val transferRef = firestore.collection(

@@ -142,9 +142,9 @@
 
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- получить -->
+    <!-- отправить -->
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/receiveButton"
+        android:id="@+id/sendButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_row="3"
@@ -157,16 +157,16 @@
         android:layout_marginBottom="24dp"
         android:fontFamily="monospace"
         android:padding="16dp"
-        android:text="@string/receive"
+        android:text="@string/send"
         android:textColor="@color/white"
         android:textSize="18sp"
         android:textStyle="bold"
         app:backgroundTint="@color/black"
         app:cornerRadius="0dp" />
 
-    <!-- отправить -->
+    <!-- получить -->
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/sendButton"
+        android:id="@+id/receiveButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_row="4"
@@ -179,7 +179,7 @@
         android:layout_marginBottom="24dp"
         android:fontFamily="monospace"
         android:padding="16dp"
-        android:text="@string/send"
+        android:text="@string/receive"
         android:textColor="@color/white"
         android:textSize="18sp"
         android:textStyle="bold"

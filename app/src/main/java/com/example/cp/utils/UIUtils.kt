@@ -71,13 +71,5 @@ object UIUtils {
                 R.color.black)
         )
         receiveButton.strokeWidth = 0
-
-        Toast.makeText(
-            context,
-            context.getString(
-                R.string.file_is_no_longer_selected
-            ),
-            Toast.LENGTH_SHORT
-        ).show()
     }
 }

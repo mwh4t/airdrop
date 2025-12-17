@@ -157,7 +157,9 @@ class SendingDialogFragment : DialogFragment() {
                             showErrorAndRestoreUI(
                                 getString(
                                     R.string.error,
-                                    getString(R.string.user_has_not_been_found)
+                                    getString(
+                                        R.string.user_has_not_been_found
+                                    )
                                 )
                             )
                         }

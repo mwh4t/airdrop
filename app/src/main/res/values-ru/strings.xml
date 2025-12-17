@@ -51,4 +51,5 @@
     <string name="close">ЗАКРЫТЬ</string>
     <string name="transfer_info">%1$s -> %2$s</string>
     <string name="permission_is_required_to_save_files">Необходимо разрешение для сохранения файлов</string>
+    <string name="select_an_application_to_view_files">Выберите приложение для просмотра файлов</string>
 </resources>

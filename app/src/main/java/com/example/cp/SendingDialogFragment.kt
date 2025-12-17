@@ -201,6 +201,19 @@ class SendingDialogFragment : DialogFragment() {
             return
         }
 
+        // проверка размера файла
+        val fileSize = getFileSize(fileUri!!)
+        val maxSizeBytes = 5 * 1024 * 1024L // 5 мб
+
+        if (fileSize > maxSizeBytes) {
+            showErrorAndRestoreUI(
+                getString(
+                    R.string.file_size_exceeds_limit
+                )
+            )
+            return
+        }
+
         FileTransferManager.uploadFile(
             context = requireContext(),
             fileUri = fileUri!!,
@@ -243,6 +256,21 @@ class SendingDialogFragment : DialogFragment() {
                 ).show()
             }
         )
+    }
+
+    // получение размера файла
+    private fun getFileSize(uri: Uri): Long {
+        var size = 0L
+        try {
+            requireContext().contentResolver
+                .openFileDescriptor(uri, "r")
+                ?.use { descriptor ->
+                    size = descriptor.statSize
+                }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return size
     }
 
     override fun onStart() {

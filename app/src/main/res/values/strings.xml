@@ -53,4 +53,5 @@
     <string name="close">CLOSE</string>
     <string name="transfer_info">%1$s -> %2$s</string>
     <string name="permission_is_required_to_save_files">Permission is required to save files</string>
+    <string name="file_size_exceeds_limit">File size exceeds the limit of 5 MB!</string>
 </resources>

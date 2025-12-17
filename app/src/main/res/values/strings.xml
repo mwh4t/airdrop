@@ -52,4 +52,5 @@
     <string name="history_is_empty">History is empty</string>
     <string name="close">CLOSE</string>
     <string name="transfer_info">%1$s -> %2$s</string>
+    <string name="permission_is_required_to_save_files">Permission is required to save files</string>
 </resources>

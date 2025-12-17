@@ -13,6 +13,7 @@ import com.example.cp.utils.FirestoreConstants.Fields
 import com.example.cp.utils.FirestoreConstants.StoragePaths
 import com.example.cp.utils.FirestoreConstants.TransferStatus
 import java.util.UUID
+import com.example.cp.utils.getMimeType
 
 object FileTransferManager {
 
@@ -232,7 +233,7 @@ object FileTransferManager {
                 if (senderUid == null) {
                     onFailure(
                         Exception(
-                            context.getErrorMessage(
+                            context.getString(R.string.error,
                                 context.getString(
                                     R.string.senders_data_has_not_been_received
                                 )
@@ -274,7 +275,7 @@ object FileTransferManager {
                         if (storageUrl == null) {
                             onFailure(
                                 Exception(
-                                    context.getErrorMessage(
+                                    context.getString(R.string.error,
                                         context.getString(
                                             R.string.link_to_the_file_was_not_received
                                         )

@@ -1,5 +1,8 @@
 package com.example.cp
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +11,8 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import com.example.cp.utils.AuthUtils
 import com.example.cp.utils.FileTransferManager
@@ -20,6 +25,24 @@ class ReceivingDialogFragment : DialogFragment() {
     private lateinit var loadingText: TextView
     private lateinit var buttonsLayout: LinearLayout
     private lateinit var senderIdInput: TextInputEditText
+    private var pendingSenderId: String? = null
+
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            pendingSenderId?.let { startReceiving(it) }
+            pendingSenderId = null
+        } else {
+            Toast.makeText(
+                requireContext(),
+                getString(
+                    R.string.permission_is_required_to_save_files
+                ),
+                Toast.LENGTH_LONG
+            ).show()
+        }
+    }
 
     companion object {
         fun newInstance(): ReceivingDialogFragment {
@@ -66,6 +89,20 @@ class ReceivingDialogFragment : DialogFragment() {
                     Toast.LENGTH_SHORT
                 ).show()
             } else {
+                // проверка и запрос разрешений
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+                    if (ContextCompat.checkSelfPermission(
+                            requireContext(),
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE
+                        ) != PackageManager.PERMISSION_GRANTED
+                    ) {
+                        pendingSenderId = senderId
+                        requestPermissionLauncher.launch(
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE
+                        )
+                        return@setOnClickListener
+                    }
+                }
                 startReceiving(senderId)
             }
         }

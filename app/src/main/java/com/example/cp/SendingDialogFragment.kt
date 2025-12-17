@@ -1,11 +1,14 @@
 package com.example.cp
 
-import android.app.ProgressDialog
+import android.annotation.SuppressLint
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.ProgressBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import com.example.cp.utils.AuthUtils
@@ -19,7 +22,10 @@ class SendingDialogFragment : DialogFragment() {
 
     private var fileName: String? = null
     private var fileUri: Uri? = null
-    private var progressDialog: ProgressDialog? = null
+    private lateinit var loadingProgressBar: ProgressBar
+    private lateinit var loadingText: TextView
+    private lateinit var buttonsLayout: LinearLayout
+    private lateinit var recipientIdInput: TextInputEditText
     private var onFileSentListener: OnFileSentListener? = null
 
     interface OnFileSentListener {
@@ -65,15 +71,16 @@ class SendingDialogFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val recipientIdInput = view.findViewById<TextInputEditText>(
-            R.id.recipientIdInput
-        )
+        recipientIdInput = view.findViewById(R.id.recipientIdInput)
         val cancelButton = view.findViewById<MaterialButton>(
             R.id.cancelButton
         )
         val sendButton = view.findViewById<MaterialButton>(
             R.id.sendDialogButton
         )
+        loadingProgressBar = view.findViewById(R.id.loadingProgressBar)
+        loadingText = view.findViewById(R.id.loadingText)
+        buttonsLayout = view.findViewById(R.id.buttonsLayout)
 
         cancelButton.setOnClickListener {
             dismiss()
@@ -111,26 +118,21 @@ class SendingDialogFragment : DialogFragment() {
                 }
 
                 else -> {
-                    // отключение кнопок во время отправки
-                    sendButton.isEnabled = false
-                    cancelButton.isEnabled = false
+                    // показать индикатор загрузки
+                    loadingProgressBar.visibility = View.VISIBLE
+                    loadingText.visibility = View.VISIBLE
+                    buttonsLayout.visibility = View.GONE
+                    recipientIdInput.isEnabled = false
 
                     // поиск получателя по ID и загрузка файла
-                    findReceiverAndUploadFile(
-                        recipientId,
-                        sendButton, cancelButton
-                    )
+                    findReceiverAndUploadFile(recipientId)
                 }
             }
         }
     }
 
     // поиск получателя и загрузка файла
-    private fun findReceiverAndUploadFile(
-        recipientNumericId: String,
-        sendButton: MaterialButton,
-        cancelButton: MaterialButton
-    ) {
+    private fun findReceiverAndUploadFile(recipientNumericId: String) {
         // поиск получателя в Firestore по ID
         com.google.firebase.firestore.FirebaseFirestore.getInstance()
             .collection(Collections.USERS)
@@ -140,12 +142,8 @@ class SendingDialogFragment : DialogFragment() {
             .addOnSuccessListener { documents ->
                 when {
                     documents.isEmpty -> {
-                        showErrorAndEnableButtons(
-                            getString(
-                                R.string.user_has_not_been_found
-                            ),
-                            sendButton,
-                            cancelButton
+                        showErrorAndRestoreUI(
+                            getString(R.string.user_has_not_been_found)
                         )
                     }
 
@@ -156,47 +154,36 @@ class SendingDialogFragment : DialogFragment() {
                         if (receiverFirebaseUid != null) {
                             uploadFile(receiverFirebaseUid)
                         } else {
-                            showErrorAndEnableButtons(
+                            showErrorAndRestoreUI(
                                 getString(
                                     R.string.error,
-                                    getString(
-                                        R.string.user_has_not_been_found
-                                    )
-                                ),
-                                sendButton,
-                                cancelButton
+                                    getString(R.string.user_has_not_been_found)
+                                )
                             )
                         }
                     }
                 }
             }
             .addOnFailureListener { e ->
-                showErrorAndEnableButtons(
-                    "${e.message}",
-                    sendButton,
-                    cancelButton
-                )
+                showErrorAndRestoreUI("${e.message}")
             }
     }
 
-    // показ ошибки и активации кнопок
-    private fun showErrorAndEnableButtons(
-        message: String,
-        sendButton: MaterialButton,
-        cancelButton: MaterialButton
-    ) {
+    // показ ошибки и восстановление UI
+    private fun showErrorAndRestoreUI(message: String) {
+        loadingProgressBar.visibility = View.GONE
+        loadingText.visibility = View.GONE
+        buttonsLayout.visibility = View.VISIBLE
+        recipientIdInput.isEnabled = true
+
         Toast.makeText(
             requireContext(),
-            getString(
-                R.string.error,
-                message
-            ),
+            getString(R.string.error, message),
             Toast.LENGTH_SHORT
         ).show()
-        sendButton.isEnabled = true
-        cancelButton.isEnabled = true
     }
 
+    @SuppressLint("SetTextI18n")
     private fun uploadFile(receiverFirebaseUid: String) {
         val currentUser = AuthUtils.getCurrentUser()
         if (currentUser == null) {
@@ -212,15 +199,6 @@ class SendingDialogFragment : DialogFragment() {
             return
         }
 
-        // создание диалога прогресса
-        progressDialog = ProgressDialog(requireContext()).apply {
-            setMessage(getString(R.string.uploading_a_file))
-            setProgressStyle(ProgressDialog.STYLE_HORIZONTAL)
-            setCancelable(false)
-            max = 100
-            show()
-        }
-
         FileTransferManager.uploadFile(
             context = requireContext(),
             fileUri = fileUri!!,
@@ -228,20 +206,31 @@ class SendingDialogFragment : DialogFragment() {
             senderUid = currentUser.uid,
             receiverUid = receiverFirebaseUid,
             onProgress = { progress ->
-                progressDialog?.progress = progress
+                loadingText.text = getString(
+                    R.string.uploading_a_file
+                ) + " $progress%"
             },
             onSuccess = { _ ->
-                progressDialog?.dismiss()
                 Toast.makeText(
                     requireContext(),
                     getString(R.string.file_has_been_sent_successfully),
                     Toast.LENGTH_LONG
                 ).show()
                 onFileSentListener?.onFileSent()
-                dismiss()
+
+                // закрытие диалога
+                view?.postDelayed({
+                    if (isAdded && !isDetached) {
+                        dismiss()
+                    }
+                }, 1000)
             },
             onFailure = { e ->
-                progressDialog?.dismiss()
+                loadingProgressBar.visibility = View.GONE
+                loadingText.visibility = View.GONE
+                buttonsLayout.visibility = View.VISIBLE
+                recipientIdInput.isEnabled = true
+
                 Toast.makeText(
                     requireContext(),
                     getString(
@@ -250,7 +239,6 @@ class SendingDialogFragment : DialogFragment() {
                     ),
                     Toast.LENGTH_LONG
                 ).show()
-                dismiss()
             }
         )
     }
@@ -261,10 +249,5 @@ class SendingDialogFragment : DialogFragment() {
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        progressDialog?.dismiss()
     }
 }

@@ -50,4 +50,5 @@
     <string name="history_is_empty">История пуста</string>
     <string name="close">ЗАКРЫТЬ</string>
     <string name="transfer_info">%1$s -> %2$s</string>
+    <string name="permission_is_required_to_save_files">Необходимо разрешение для сохранения файлов</string>
 </resources>

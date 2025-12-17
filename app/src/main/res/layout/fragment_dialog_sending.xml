@@ -52,7 +52,30 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
+    <!-- индикатор загрузки -->
+    <ProgressBar
+        android:id="@+id/loadingProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="24dp"
+        android:visibility="gone"
+        android:indeterminateTint="@color/black" />
+
+    <TextView
+        android:id="@+id/loadingText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="8dp"
+        android:fontFamily="monospace"
+        android:text="@string/uploading_a_file"
+        android:textColor="@color/gray"
+        android:textSize="14sp"
+        android:visibility="gone" />
+
     <LinearLayout
+        android:id="@+id/buttonsLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"

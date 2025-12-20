@@ -40,6 +40,7 @@ android {
 }
 
 dependencies {
+    // основные зависимости
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -52,7 +53,13 @@ dependencies {
     implementation(libs.googleid)
     implementation(libs.firebase.storage)
     implementation(libs.gms.play.services.auth)
+
+    // unit тесты
     testImplementation(libs.junit)
+
+    // инструментальные тесты
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.androidx.rules)
+    androidTestImplementation(libs.androidx.runner)
 }
